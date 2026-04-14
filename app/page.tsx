@@ -1,4 +1,9 @@
 import Image from "next/image";
+import ParticleCanvas from "@/components/ParticleCanvas";
+import TypedHeading from "@/components/TypedHeading";
+import AnimatedCounter from "@/components/AnimatedCounter";
+import FadeIn from "@/components/FadeIn";
+import MobileMenu from "@/components/MobileMenu";
 import {
   HERO,
   STATS,
@@ -14,7 +19,9 @@ import {
 
 export default function Home() {
   return (
-    <div style={{ background: "#000000", minHeight: "100vh" }}>
+    <div style={{ background: "#000000", minHeight: "100vh", position: "relative" }}>
+      <ParticleCanvas />
+      <div style={{ position: "relative", zIndex: 1 }}>
       {/* Fixed Top Nav */}
       <nav
         style={{
@@ -62,6 +69,7 @@ export default function Home() {
             </a>
           ))}
         </div>
+        <MobileMenu />
       </nav>
 
       {/* HERO */}
@@ -91,21 +99,7 @@ export default function Home() {
             <div className="section-label" style={{ marginBottom: "1.5rem" }}>
               {HERO.label}
             </div>
-            <h1
-              className="font-serif-heading"
-              style={{
-                fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
-                lineHeight: 1.05,
-                fontWeight: 800,
-                letterSpacing: "-0.02em",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <span style={{ color: "#e5e5e5" }}>{HERO.headlineLine1}</span>
-              <br />
-              <span style={{ color: "#3b82f6" }}>{HERO.headlineLine2}</span>
-              <span className="type-cursor"></span>
-            </h1>
+            <TypedHeading line1={HERO.headlineLine1} line2={HERO.headlineLine2} />
             <p
               style={{
                 color: "#999",
@@ -180,11 +174,12 @@ export default function Home() {
                   fontWeight: 700,
                   lineHeight: 1,
                   marginBottom: "0.5rem",
+                  fontVariantNumeric: "tabular-nums",
                 }}
               >
-                {s.value}
+                <AnimatedCounter target={s.value} />
               </div>
-              <div style={{ color: "#555", fontSize: "0.78rem", lineHeight: 1.4 }}>
+              <div style={{ color: "#777", fontSize: "0.78rem", lineHeight: 1.4 }}>
                 {s.label}
               </div>
             </div>
@@ -194,7 +189,7 @@ export default function Home() {
 
       {/* SELECTED WORK */}
       <section id="work" className="section-pad">
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <FadeIn style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <SectionHeader
             label="Selected Work"
             title="Production, products & writing"
@@ -355,12 +350,12 @@ export default function Home() {
               </a>
             ))}
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* VENTURES */}
       <section id="ventures" className="section-pad section-divider">
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <FadeIn style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <SectionHeader
             label="Entrepreneurial Ventures"
             title="Built from scratch"
@@ -403,24 +398,24 @@ export default function Home() {
                   href={v.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="card-base"
+                  className="card-base venture-card"
                   style={{ padding: "2rem", textDecoration: "none", color: "inherit" }}
                 >
                   {inner}
                 </a>
               ) : (
-                <div key={v.name} className="card-base" style={{ padding: "2rem" }}>
+                <div key={v.name} className="card-base venture-card" style={{ padding: "2rem" }}>
                   {inner}
                 </div>
               );
             })}
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* AWARDS */}
       <section id="awards" className="section-pad section-divider">
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <FadeIn style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <SectionHeader
             label="Recognition"
             title="Awards & Fellowships"
@@ -437,12 +432,12 @@ export default function Home() {
             <AwardColumn heading="APSE" items={AWARDS_APSE} />
             <AwardColumn heading="Individual" items={AWARDS_INDIVIDUAL} />
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* CONTACT */}
       <section id="contact" className="section-pad section-divider" style={{ textAlign: "center" }}>
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <FadeIn style={{ maxWidth: "800px", margin: "0 auto" }}>
           <div className="section-label" style={{ marginBottom: "1rem" }}>
             Get in Touch
           </div>
@@ -470,7 +465,7 @@ export default function Home() {
               </a>
             ))}
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* FOOTER */}
@@ -513,8 +508,23 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Responsive overrides */}
+      {/* Responsive overrides + venture hover bloom */}
       <style>{`
+        .venture-card { position: relative; overflow: hidden; }
+        .venture-card::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 60%;
+          height: 60%;
+          background: radial-gradient(circle at top right, rgba(59,130,246,0.18), transparent 70%);
+          opacity: 0;
+          transition: opacity 0.4s ease;
+          pointer-events: none;
+        }
+        .venture-card:hover::before { opacity: 1; }
+
         @media (max-width: 999px) {
           .hero-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
           .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -530,6 +540,7 @@ export default function Home() {
           .writing-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
+      </div>
     </div>
   );
 }
